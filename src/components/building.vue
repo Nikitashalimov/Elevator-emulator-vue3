@@ -1,10 +1,8 @@
 <template>
   <div class="building">
-    <div class="shaft">
-      <shaft v-for="item in this.level" :key="item" :shaftNumber="item"></shaft>
-    </div>
+    <shaft></shaft>
     <div class="floorColumn">
-      <floor v-for="item in this.level" :key="item" :floorNumber="item"></floor>
+      <floor v-for="item in allLevel" :key="item" :floorNumber="item"></floor>
     </div>
   </div>
 </template>
@@ -12,17 +10,18 @@
 <script>
 import floor from "@/components/floor.vue";
 import shaft from "@/components/shaft.vue";
+import { mapState } from "vuex";
 
 export default {
   name: "building",
-  data() {
-    return {
-      level: 5,
-    };
-  },
   components: {
     floor,
     shaft,
+  },
+    computed: {
+    ...mapState({
+      allLevel: (state) => state.controller.allLevel,
+    }),
   },
 };
 </script>

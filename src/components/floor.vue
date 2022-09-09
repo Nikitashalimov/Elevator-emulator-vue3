@@ -1,22 +1,22 @@
 <template>
   <div class="floor">
-    <button class="button_call" type="button" @click="callElevator()"></button>
+    <button
+      class="button_call"
+      type="button"
+      @click="changeElevatorLevel(floorNumber)"
+    ></button>
     <p class="numberFloor">{{ floorNumber }}</p>
   </div>
 </template>
 
 <script>
+import { mapMutations } from "vuex";
+
 export default {
   name: "floor",
-  props: {
-    floorNumber: {
-      type: Number,
-    },
-  },
+  props: ["floorNumber"],
   methods: {
-    callElevator() {
-      console.log(this.floorNumber);
-    },
+    ...mapMutations(["changeElevatorLevel"]),
   },
 };
 </script>
