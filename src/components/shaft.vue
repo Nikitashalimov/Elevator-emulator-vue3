@@ -3,7 +3,7 @@
     <div class="shaft_level" v-for="item in allLevel" :key="item">
       {{ item }}
     </div>
-    <div class="elevator_box">
+    <div class="elevator_box" :style="move">
       <div class="tab_info">{{ elevatorLevel }} ▲▼</div>
     </div>
   </div>
@@ -12,6 +12,8 @@
 <script>
 import { mapState } from "vuex";
 
+// transform: `translateY(${count}px)`
+
 export default {
   name: "levelShaft",
   computed: {
@@ -19,6 +21,9 @@ export default {
       allLevel: (state) => state.controller.allLevel,
       elevatorLevel: (state) => state.controller.elevatorLevel,
     }),
+    move() {
+      return `transform: translateY(${(this.elevatorLevel - 1) * -100}px)`;
+    },
   },
 };
 </script>
@@ -43,11 +48,11 @@ export default {
   background-color: blue;
   height: 100px;
   width: 70px;
-
   display: flex;
   justify-content: center;
   align-items: center;
   position: absolute;
+  transition: transform 1s;
 }
 
 .tab_info {
