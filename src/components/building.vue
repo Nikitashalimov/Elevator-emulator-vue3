@@ -1,6 +1,10 @@
 <template>
   <div class="building">
-    <shaft></shaft>
+    <shaft
+      v-for="(item, index) in elevators"
+      :key="item"
+      :index="index"
+    ></shaft>
     <div class="floorColumn">
       <floor v-for="item in allLevel" :key="item" :floorNumber="item"></floor>
     </div>
@@ -18,9 +22,10 @@ export default {
     floor,
     shaft,
   },
-    computed: {
+  computed: {
     ...mapState({
       allLevel: (state) => state.controller.allLevel,
+      elevators: (state) => state.controller.elevators,
     }),
   },
 };
