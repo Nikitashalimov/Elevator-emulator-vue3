@@ -7,7 +7,7 @@
       ref="elevatorBox"
       class="elevator_box"
       :style="[speedMove, move]"
-      :class="{ arrived: this.getElevatorStatus === 'arrived' }"
+      :class="{ arrived: this.status === 'arrived' }"
     >
       <div v-if="this.nextLevel" class="tab_info">
         <p>{{ this.currentLevel }}</p>
@@ -105,6 +105,7 @@ export default {
   justify-content: center;
   align-items: center;
   position: absolute;
+  animation-timing-function: linear;
 }
 
 .tab_info {
@@ -118,10 +119,27 @@ export default {
   border-radius: 5px;
 }
 
+@keyframes blinkBox {
+  0% {
+    background-color: blue;
+  }
+  25% {
+    background-color: rgb(137, 137, 244);
+  }
+  50% {
+    background-color: blue;
+  }
+  75% {
+    background-color: rgb(137, 137, 244);
+  }
+  100% {
+    background-color: blue;
+  }
+}
+
 .arrived {
-  animation-name: blink;
+  animation-name: blinkBox;
   animation-timing-function: linear;
   animation-duration: 3s;
-  animation-iteration-count: infinite;
 }
 </style>
