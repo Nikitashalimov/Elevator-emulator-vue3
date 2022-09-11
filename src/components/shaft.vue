@@ -3,8 +3,13 @@
     <div class="shaft_level" v-for="item in allLevel" :key="item">
       {{ item }}
     </div>
-    <div ref="elevatorBox" class="elevator_box" :style="[speedMove, move]">
-      <div v-if="this.elevatorLevels[0]" class="tab_info">
+    <div
+      ref="elevatorBox"
+      class="elevator_box"
+      :style="[speedMove, move]"
+      :class="{ arrived: this.getElevatorStatus === 'arrived' }"
+    >
+      <div v-if="this.nextLevel" class="tab_info">
         <p>{{ this.currentLevel }}</p>
         <p v-if="this.direction === 'up'">▲</p>
         <p v-if="this.direction === 'down'">▼</p>
@@ -23,15 +28,16 @@ export default {
     ...mapState({
       allLevel: (state) => state.controller.allLevel,
       currentLevel: (state) => state.controller.elevators[0].currentLevel,
-      elevatorLevels: (state) => state.controller.elevators[0].elevatorLevels,
-      elevatorStatus: (state) => state.controller.elevators[0].elevatorStatus,
+      nextLevel: (state) => state.controller.elevators[0].elevatorLevels[0],
+      status: (state) => state.controller.elevators[0].elevatorStatus,
+      speed: (state) => state.controller.elevators[0].speed,
       direction: (state) => state.controller.elevators[0].direction,
     }),
     ...mapGetters([
       "getElevatorSpeed",
       "getCurrentElevatorLevel",
-      "nextLevel",
       "getDirection",
+      "getElevatorStatus",
     ]),
     speedMove() {
       return `transition: transform ${this.getElevatorSpeed()}s`;
@@ -51,25 +57,23 @@ export default {
       "changeDirection",
     ]),
     runElevator() {
+      this.changeElevatorSpeed(Math.abs(this.nextLevel - this.currentLevel));
+      this.changeDirection(this.nextLevel > this.currentLevel ? "up" : "down");
+      this.changeElevatorStatus("active");
       this.changeCurrentLevel(this.nextLevel);
       this.$refs.elevatorBox.ontransitionend = () => {
         this.changeElevatorStatus("arrived");
         setTimeout(() => {
           this.changeElevatorStatus("wait");
           this.deleteElevatorLevel();
-          if (this.nextLevel) {
-            this.changeElevatorSpeed();
-            this.changeDirection();
-            this.changeElevatorStatus("active");
-            this.runElevator();
-          }
+          if (this.nextLevel) this.runElevator();
         }, 3000);
       };
     },
   },
   watch: {
-    elevatorStatus(newStatus, oldStatus) {
-      if (newStatus != oldStatus) {
+    status(newStatus) {
+      if (newStatus === "start") {
         this.runElevator();
       }
     },
@@ -112,5 +116,12 @@ export default {
   align-items: center;
   background-color: gray;
   border-radius: 5px;
+}
+
+.arrived {
+  animation-name: blink;
+  animation-timing-function: linear;
+  animation-duration: 3s;
+  animation-iteration-count: infinite;
 }
 </style>

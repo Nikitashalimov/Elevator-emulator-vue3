@@ -10,15 +10,12 @@
 </template>
 
 <script>
-import { mapState, mapMutations, mapGetters } from "vuex";
+import { mapMutations, mapGetters } from "vuex";
 
 export default {
   name: "floor",
   props: ["floorNumber"],
   computed: {
-    ...mapState({
-      currentLevel: (state) => state.controller.elevators[0].currentLevel,
-    }),
     ...mapGetters([
       "getCurrentElevatorLevel",
       "includesLevel",
@@ -39,9 +36,7 @@ export default {
         this.getElevatorStatus() === "wait"
       ) {
         this.addElevatorLevels(this.floorNumber);
-        this.changeElevatorSpeed();
-        this.changeDirection();
-        this.changeElevatorStatus("active");
+        this.changeElevatorStatus("start");
       } else if (!this.includesLevel(this.floorNumber)) {
         this.addElevatorLevels(this.floorNumber);
       }

@@ -1,13 +1,11 @@
 export const controllerModule = {
 	state: {
-		// Общее количество этажей
 		allLevel: 5,
-		// Лифты
 		elevators: [
 			{
 				currentLevel: 1,
 				elevatorLevels: [],
-				elevatorSpeed: 1,
+				elevatorSpeed: "1",
 				elevatorStatus: 'wait',
 				direction: 'null',
 			}
@@ -23,7 +21,7 @@ export const controllerModule = {
 		includesLevel: (state) => (newLevel) => {
 			return state.elevators[0].elevatorLevels.includes(newLevel);
 		},
-		nextLevel: (state) => () => {
+		getNextLevel: (state) => () => {
 			return state.elevators[0].elevatorLevels[0];
 		},
 		getElevatorSpeed: (state) => () => {
@@ -37,8 +35,8 @@ export const controllerModule = {
 		}
 	},
 	mutations: {
-		changeCurrentLevel(state) {
-			state.elevators[0].currentLevel = state.elevators[0].elevatorLevels[0];
+		changeCurrentLevel(state, newLevel) {
+			state.elevators[0].currentLevel = newLevel;
 		},
 		addElevatorLevels(state, newLevel) {
 			state.elevators[0].elevatorLevels.push(newLevel);
@@ -46,22 +44,14 @@ export const controllerModule = {
 		deleteElevatorLevel(state) {
 			state.elevators[0].elevatorLevels.shift();
 		},
-		changeElevatorSpeed(state) {
-			state.elevators[0].elevatorSpeed = Math.abs((state.elevators[0].currentLevel) - (state.elevators[0].elevatorLevels[0]));
+		changeElevatorSpeed(state, newSpeed) {
+			state.elevators[0].elevatorSpeed = newSpeed;
 		},
 		changeElevatorStatus(state, newStatus) {
-			if (state.elevators[0].elevatorLevels.length === 0) {
-				state.elevators[0].elevatorStatus = 'wait'
-			} else {
-				state.elevators[0].elevatorStatus = newStatus;
-			}
+			state.elevators[0].elevatorStatus = newStatus;
 		},
-		changeDirection(state) {
-			if (state.elevators[0].elevatorLevels[0] > state.elevators[0].currentLevel) {
-				state.elevators[0].direction = "up";
-			} else {
-				state.elevators[0].direction = "down";
-			}
+		changeDirection(state, newDirection) {
+			state.elevators[0].direction = newDirection;
 		},
 	},
 	actions: {}
