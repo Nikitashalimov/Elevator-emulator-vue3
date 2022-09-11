@@ -3,14 +3,18 @@
     <div class="shaft_level" v-for="item in allLevel" :key="item">
       {{ item }}
     </div>
-    <div class="elevator_box" :style="[speedMove, move]">
-      <div class="tab_info">{{ getElevatorLevel(index) }} ▲▼</div>
+    <div ref="elevatorBox" class="elevator_box" :style="[speedMove, move]">
+      <div v-if="this.elevatorLevels[0]" class="tab_info">
+        <p>{{ this.currentLevel }}</p>
+        <p v-if="this.direction === 'up'">▲</p>
+        <p v-if="this.direction === 'down'">▼</p>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
-import { mapState, mapGetters } from "vuex";
+import { mapState, mapGetters, mapMutations } from "vuex";
 
 export default {
   name: "levelShaft",
@@ -18,17 +22,56 @@ export default {
   computed: {
     ...mapState({
       allLevel: (state) => state.controller.allLevel,
+      currentLevel: (state) => state.controller.elevators[0].currentLevel,
+      elevatorLevels: (state) => state.controller.elevators[0].elevatorLevels,
+      elevatorStatus: (state) => state.controller.elevators[0].elevatorStatus,
+      direction: (state) => state.controller.elevators[0].direction,
     }),
-    ...mapGetters(["getElevatorLevel", "getElevatorSpeed"]),
-    // Стиль скорости движения лифта
+    ...mapGetters([
+      "getElevatorSpeed",
+      "getCurrentElevatorLevel",
+      "nextLevel",
+      "getDirection",
+    ]),
     speedMove() {
-      return `transition: transform ${this.getElevatorSpeed(this.index)}s`;
+      return `transition: transform ${this.getElevatorSpeed()}s`;
     },
-    // Стиль для движения лифта
     move() {
       return `transform: translateY(${
-        (this.getElevatorLevel(this.index) - 1) * -100
+        (this.getCurrentElevatorLevel(this.index) - 1) * -100
       }px)`;
+    },
+  },
+  methods: {
+    ...mapMutations([
+      "changeCurrentLevel",
+      "changeElevatorStatus",
+      "deleteElevatorLevel",
+      "changeElevatorSpeed",
+      "changeDirection",
+    ]),
+    runElevator() {
+      this.changeCurrentLevel(this.nextLevel);
+      this.$refs.elevatorBox.ontransitionend = () => {
+        this.changeElevatorStatus("arrived");
+        setTimeout(() => {
+          this.changeElevatorStatus("wait");
+          this.deleteElevatorLevel();
+          if (this.nextLevel) {
+            this.changeElevatorSpeed();
+            this.changeDirection();
+            this.changeElevatorStatus("active");
+            this.runElevator();
+          }
+        }, 3000);
+      };
+    },
+  },
+  watch: {
+    elevatorStatus(newStatus, oldStatus) {
+      if (newStatus != oldStatus) {
+        this.runElevator();
+      }
     },
   },
 };

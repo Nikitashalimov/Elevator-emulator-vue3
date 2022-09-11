@@ -2,45 +2,67 @@ export const controllerModule = {
 	state: {
 		// Общее количество этажей
 		allLevel: 5,
-		// // Позиция лифта
-		// elevatorLevel: 1,
 		// Лифты
 		elevators: [
 			{
-				// Индекс шахты лифта
-				index: 0,
-				// Очередь лифта (куда ехать)
-				elevatorLevel: [1],
-				// Скорость движения лифта
+				currentLevel: 1,
+				elevatorLevels: [],
 				elevatorSpeed: 1,
+				elevatorStatus: 'wait',
+				direction: 'null',
 			}
 		],
 	},
 	getters: {
-		// Получить elevatorLevel по индексу
-		getElevatorLevel: (state) => (index) => {
-			return state.elevators[index].elevatorLevel[0]
+		getCurrentElevatorLevel: (state) => () => {
+			return state.elevators[0].currentLevel;
 		},
-		// Получить elevatorSpeed по индексу
-		getElevatorSpeed: (state) => (index) => {
-			return state.elevators[index].elevatorSpeed
+		getElevatorLevels: (state) => (index) => {
+			return state.elevators[index].elevatorLevels;
 		},
+		includesLevel: (state) => (newLevel) => {
+			return state.elevators[0].elevatorLevels.includes(newLevel);
+		},
+		nextLevel: (state) => () => {
+			return state.elevators[0].elevatorLevels[0];
+		},
+		getElevatorSpeed: (state) => () => {
+			return state.elevators[0].elevatorSpeed;
+		},
+		getElevatorStatus: (state) => () => {
+			return state.elevators[0].elevatorStatus;
+		},
+		getDirection: (state) => () => {
+			return state.elevators[0].direction;
+		}
 	},
 	mutations: {
-		// Изменение позиции лифта
-		changeElevatorLevel(state, newLevel) {
-			// Добавляем новый этаж
-			state.elevators[0].elevatorLevel.push(newLevel);
-			console.log(state.elevators[0].elevatorLevel);
-
-			// Вычисляем время движения лифта
-			state.elevators[0].elevatorSpeed = Math.abs((state.elevators[0].elevatorSpeed) - (state.elevators[0].elevatorLevel[1]));
-			console.log(state.elevators[0].elevatorSpeed);
-
-			// Удаляем первый запрос на этаж
-			state.elevators[0].elevatorLevel.shift();
-			console.log(state.elevators[0].elevatorLevel);
-		}
+		changeCurrentLevel(state) {
+			state.elevators[0].currentLevel = state.elevators[0].elevatorLevels[0];
+		},
+		addElevatorLevels(state, newLevel) {
+			state.elevators[0].elevatorLevels.push(newLevel);
+		},
+		deleteElevatorLevel(state) {
+			state.elevators[0].elevatorLevels.shift();
+		},
+		changeElevatorSpeed(state) {
+			state.elevators[0].elevatorSpeed = Math.abs((state.elevators[0].currentLevel) - (state.elevators[0].elevatorLevels[0]));
+		},
+		changeElevatorStatus(state, newStatus) {
+			if (state.elevators[0].elevatorLevels.length === 0) {
+				state.elevators[0].elevatorStatus = 'wait'
+			} else {
+				state.elevators[0].elevatorStatus = newStatus;
+			}
+		},
+		changeDirection(state) {
+			if (state.elevators[0].elevatorLevels[0] > state.elevators[0].currentLevel) {
+				state.elevators[0].direction = "up";
+			} else {
+				state.elevators[0].direction = "down";
+			}
+		},
 	},
 	actions: {}
 };

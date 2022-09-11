@@ -3,20 +3,49 @@
     <button
       class="button_call"
       type="button"
-      @click="changeElevatorLevel(floorNumber)"
+      @click="callUpElevator()"
     ></button>
     <p class="numberFloor">{{ floorNumber }}</p>
   </div>
 </template>
 
 <script>
-import { mapMutations } from "vuex";
+import { mapState, mapMutations, mapGetters } from "vuex";
 
 export default {
   name: "floor",
   props: ["floorNumber"],
+  computed: {
+    ...mapState({
+      currentLevel: (state) => state.controller.elevators[0].currentLevel,
+    }),
+    ...mapGetters([
+      "getCurrentElevatorLevel",
+      "includesLevel",
+      "getElevatorStatus",
+    ]),
+  },
   methods: {
-    ...mapMutations(["changeElevatorLevel"]),
+    ...mapMutations([
+      "addElevatorLevels",
+      "changeElevatorStatus",
+      "changeElevatorSpeed",
+      "changeDirection",
+    ]),
+    callUpElevator() {
+      if (
+        !this.includesLevel(this.floorNumber) &&
+        this.getCurrentElevatorLevel(0) != this.floorNumber &&
+        this.getElevatorStatus() === "wait"
+      ) {
+        this.addElevatorLevels(this.floorNumber);
+        this.changeElevatorSpeed();
+        this.changeDirection();
+        this.changeElevatorStatus("active");
+      } else if (!this.includesLevel(this.floorNumber)) {
+        this.addElevatorLevels(this.floorNumber);
+      }
+    },
   },
 };
 </script>
