@@ -1,10 +1,4 @@
 <template>
-  <div class="building">
-    <shaft></shaft>
-    <div class="floor_column">
-      <floor v-for="item in allLevel" :key="item" :floorNumber="item"></floor>
-    </div>
-  </div>
   <div class="settings">
     <input
       v-model="newAllLevel"
@@ -20,6 +14,12 @@
     >
       ОК
     </button>
+  </div>
+  <div class="building">
+    <shaft></shaft>
+    <div class="floor_column">
+      <floor v-for="item in allLevel" :key="item" :floorNumber="item"></floor>
+    </div>
   </div>
 </template>
 
@@ -64,11 +64,10 @@ export default {
 
 <style scoped>
 .building {
-  margin: auto;
   border: 3px solid gray;
   display: flex;
   justify-content: center;
-  paddin-top: 0;
+  margin-top: 100px;
 }
 
 .shaft {
@@ -86,6 +85,7 @@ export default {
   display: flex;
   width: 250px;
   height: 25px;
+  margin-left: auto;
 }
 
 .settings_input {
