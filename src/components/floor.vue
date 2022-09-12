@@ -2,13 +2,15 @@
   <div class="floor">
     <button
       class="button"
-      :disabled="this.currentLevel === floorNumber"
+      :disabled="this.getCurrentElevatorLevel(0) === floorNumber"
       :class="{
         button_call: this.includesLevel(floorNumber),
         button_this_call:
-          this.currentLevel === floorNumber && this.status === 'active',
+          this.getCurrentElevatorLevel(0) === floorNumber &&
+          this.getElevatorStatus(0) === 'active',
         button_arrived:
-          this.currentLevel === floorNumber && this.status === 'arrived',
+          this.getCurrentElevatorLevel(0) === floorNumber &&
+          this.getElevatorStatus(0) === 'arrived',
       }"
       type="button"
       @click="callUpElevator()"
@@ -18,17 +20,12 @@
 </template>
 
 <script>
-import { mapState, mapMutations, mapGetters } from "vuex";
+import { mapMutations, mapGetters } from "vuex";
 
 export default {
   name: "floor",
   props: ["floorNumber"],
   computed: {
-    ...mapState({
-      currentLevel: (state) => state.controller.elevators[0].currentLevel,
-      nextLevel: (state) => state.controller.elevators[0].elevatorLevels[0],
-      status: (state) => state.controller.elevators[0].elevatorStatus,
-    }),
     ...mapGetters([
       "getCurrentElevatorLevel",
       "includesLevel",
@@ -46,7 +43,7 @@ export default {
       if (
         !this.includesLevel(this.floorNumber) &&
         this.getCurrentElevatorLevel(0) != this.floorNumber &&
-        this.getElevatorStatus() === "wait"
+        this.getElevatorStatus(0) === "wait"
       ) {
         this.addElevatorLevels(this.floorNumber);
         this.changeElevatorStatus("start");

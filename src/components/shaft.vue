@@ -1,18 +1,18 @@
 <template>
   <div class="shaft">
-    <div class="shaft_level" v-for="item in allLevel" :key="item">
-      {{ item }}
-    </div>
+    <div class="shaft_level" v-for="item in allLevel" :key="item"></div>
     <div
       ref="elevatorBox"
       class="elevator_box"
       :style="[speedMove, move]"
-      :class="{ arrived: this.status === 'arrived' }"
+      :class="{
+        arrived: this.getElevatorStatus(this.indexShaft) === 'arrived',
+      }"
     >
-      <div v-if="this.nextLevel" class="tab_info">
-        <p>{{ this.currentLevel }}</p>
-        <p v-if="this.direction === 'up'">▲</p>
-        <p v-if="this.direction === 'down'">▼</p>
+      <div v-if="this.getNextLevel(this.indexShaft)" class="tab_info">
+        <p>{{ this.getCurrentElevatorLevel(this.indexShaft) }}</p>
+        <p v-if="this.getDirection(this.indexShaft) === 'up'">▲</p>
+        <p v-if="this.getDirection(this.indexShaft) === 'down'">▼</p>
       </div>
     </div>
   </div>
@@ -23,29 +23,29 @@ import { mapState, mapGetters, mapMutations } from "vuex";
 
 export default {
   name: "levelShaft",
-  props: ["index"],
+  props: ["indexShaft"],
   computed: {
     ...mapState({
       allLevel: (state) => state.controller.allLevel,
-      currentLevel: (state) => state.controller.elevators[0].currentLevel,
-      nextLevel: (state) => state.controller.elevators[0].elevatorLevels[0],
-      status: (state) => state.controller.elevators[0].elevatorStatus,
-      speed: (state) => state.controller.elevators[0].speed,
-      direction: (state) => state.controller.elevators[0].direction,
+      elevators: (state) => state.controller.elevators,
     }),
     ...mapGetters([
-      "getElevatorSpeed",
       "getCurrentElevatorLevel",
-      "getDirection",
+      "getNextLevel",
+      "getElevatorSpeed",
       "getElevatorStatus",
+      "getDirection",
     ]),
     speedMove() {
-      return `transition: transform ${this.getElevatorSpeed()}s`;
+      return `transition: transform ${this.getElevatorSpeed(this.indexShaft)}s`;
     },
     move() {
       return `transform: translateY(${
-        (this.getCurrentElevatorLevel(this.index) - 1) * -100
+        (this.getCurrentElevatorLevel(this.indexShaft) - 1) * -100
       }px)`;
+    },
+    statusForWatcher() {
+      return this.elevators[this.indexShaft].elevatorStatus;
     },
   },
   methods: {
@@ -57,22 +57,32 @@ export default {
       "changeDirection",
     ]),
     runElevator() {
-      this.changeElevatorSpeed(Math.abs(this.nextLevel - this.currentLevel));
-      this.changeDirection(this.nextLevel > this.currentLevel ? "up" : "down");
+      this.changeElevatorSpeed(
+        Math.abs(
+          this.getNextLevel(this.indexShaft) -
+            this.getCurrentElevatorLevel(this.indexShaft)
+        )
+      );
+      this.changeDirection(
+        this.getNextLevel(this.indexShaft) >
+          this.getCurrentElevatorLevel(this.indexShaft)
+          ? "up"
+          : "down"
+      );
       this.changeElevatorStatus("active");
-      this.changeCurrentLevel(this.nextLevel);
+      this.changeCurrentLevel(this.getNextLevel(this.indexShaft));
       this.$refs.elevatorBox.ontransitionend = () => {
         this.changeElevatorStatus("arrived");
         setTimeout(() => {
           this.changeElevatorStatus("wait");
           this.deleteElevatorLevel();
-          if (this.nextLevel) this.runElevator();
+          if (this.getNextLevel(this.indexShaft)) this.runElevator();
         }, 3000);
       };
     },
   },
   watch: {
-    status(newStatus) {
+    statusForWatcher(newStatus) {
       if (newStatus === "start") {
         this.runElevator();
       }

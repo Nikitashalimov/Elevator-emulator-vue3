@@ -7,31 +7,28 @@ export const controllerModule = {
 				elevatorLevels: [],
 				elevatorSpeed: "1",
 				elevatorStatus: 'wait',
-				direction: 'null',
-			}
+				direction: "null",
+			},
 		],
 	},
 	getters: {
-		getCurrentElevatorLevel: (state) => () => {
-			return state.elevators[0].currentLevel;
-		},
-		getElevatorLevels: (state) => (index) => {
-			return state.elevators[index].elevatorLevels;
+		getCurrentElevatorLevel: (state) => (index) => {
+			return state.elevators[index].currentLevel;
 		},
 		includesLevel: (state) => (newLevel) => {
 			return state.elevators[0].elevatorLevels.includes(newLevel);
 		},
-		getNextLevel: (state) => () => {
-			return state.elevators[0].elevatorLevels[0];
+		getNextLevel: (state) => (index) => {
+			return state.elevators[index].elevatorLevels[0];
 		},
-		getElevatorSpeed: (state) => () => {
-			return state.elevators[0].elevatorSpeed;
+		getElevatorSpeed: (state) => (index) => {
+			return state.elevators[index].elevatorSpeed;
 		},
-		getElevatorStatus: (state) => () => {
-			return state.elevators[0].elevatorStatus;
+		getElevatorStatus: (state) => (index) => {
+			return state.elevators[index].elevatorStatus;
 		},
-		getDirection: (state) => () => {
-			return state.elevators[0].direction;
+		getDirection: (state) => (index) => {
+			return state.elevators[index].direction;
 		}
 	},
 	mutations: {
@@ -54,5 +51,5 @@ export const controllerModule = {
 			state.elevators[0].direction = newDirection;
 		},
 	},
-	actions: {}
+	actions: {},
 };

@@ -3,7 +3,7 @@
     <shaft
       v-for="(item, index) in elevators"
       :key="item"
-      :index="index"
+      :indexShaft="index"
     ></shaft>
     <div class="floorColumn">
       <floor v-for="item in allLevel" :key="item" :floorNumber="item"></floor>
