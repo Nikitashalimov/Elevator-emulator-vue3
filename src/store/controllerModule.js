@@ -1,55 +1,49 @@
 export const controllerModule = {
 	state: {
 		allLevel: 5,
-		elevators: [
-			{
-				currentLevel: 1,
-				elevatorLevels: [],
-				elevatorSpeed: "1",
-				elevatorStatus: 'wait',
-				direction: "null",
-			},
-		],
+		currentLevel: 1,
+		elevatorLevels: [],
+		elevatorSpeed: "0",
+		elevatorStatus: 'wait',
+		direction: "null",
 	},
 	getters: {
-		getCurrentElevatorLevel: (state) => (index) => {
-			return state.elevators[index].currentLevel;
-		},
 		includesLevel: (state) => (newLevel) => {
-			return state.elevators[0].elevatorLevels.includes(newLevel);
+			return state.elevatorLevels.includes(newLevel);
 		},
-		getNextLevel: (state) => (index) => {
-			return state.elevators[index].elevatorLevels[0];
-		},
-		getElevatorSpeed: (state) => (index) => {
-			return state.elevators[index].elevatorSpeed;
-		},
-		getElevatorStatus: (state) => (index) => {
-			return state.elevators[index].elevatorStatus;
-		},
-		getDirection: (state) => (index) => {
-			return state.elevators[index].direction;
+		getNextLevel: (state) => () => {
+			return state.elevatorLevels[0];
 		}
 	},
 	mutations: {
 		changeCurrentLevel(state, newLevel) {
-			state.elevators[0].currentLevel = newLevel;
+			state.currentLevel = newLevel;
 		},
 		addElevatorLevels(state, newLevel) {
-			state.elevators[0].elevatorLevels.push(newLevel);
+			state.elevatorLevels.push(newLevel);
 		},
 		deleteElevatorLevel(state) {
-			state.elevators[0].elevatorLevels.shift();
+			state.elevatorLevels.shift();
 		},
 		changeElevatorSpeed(state, newSpeed) {
-			state.elevators[0].elevatorSpeed = newSpeed;
+			state.elevatorSpeed = newSpeed;
 		},
 		changeElevatorStatus(state, newStatus) {
-			state.elevators[0].elevatorStatus = newStatus;
+			state.elevatorStatus = newStatus;
 		},
 		changeDirection(state, newDirection) {
-			state.elevators[0].direction = newDirection;
+			state.direction = newDirection;
 		},
+		changeAllLevel(state, newAllLevel) {
+			state.allLevel = newAllLevel;
+		},
+		resetCurrentLevel(state) {
+			state.currentLevel = 1;
+			state.elevatorLevels = [];
+			state.elevatorSpeed = "0";
+			state.elevatorStatus = 'wait';
+			state.direction = "null";
+		}
 	},
 	actions: {},
 };

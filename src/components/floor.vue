@@ -2,48 +2,46 @@
   <div class="floor">
     <button
       class="button"
-      :disabled="this.getCurrentElevatorLevel(0) === floorNumber"
+      :disabled="this.currentLevel === floorNumber"
       :class="{
         button_call: this.includesLevel(floorNumber),
         button_this_call:
-          this.getCurrentElevatorLevel(0) === floorNumber &&
-          this.getElevatorStatus(0) === 'active',
+          this.currentLevel === floorNumber && this.elevatorStatus === 'active',
         button_arrived:
-          this.getCurrentElevatorLevel(0) === floorNumber &&
-          this.getElevatorStatus(0) === 'arrived',
+          this.currentLevel === floorNumber &&
+          this.elevatorStatus === 'arrived',
       }"
       type="button"
       @click="callUpElevator()"
     ></button>
-    <p class="numberFloor">{{ floorNumber }}</p>
+    <p class="number_floor">{{ floorNumber }}</p>
   </div>
 </template>
 
 <script>
-import { mapMutations, mapGetters } from "vuex";
+import { mapState, mapGetters, mapMutations } from "vuex";
 
 export default {
   name: "floor",
   props: ["floorNumber"],
   computed: {
-    ...mapGetters([
-      "getCurrentElevatorLevel",
-      "includesLevel",
-      "getElevatorStatus",
-    ]),
+    ...mapState({
+      currentLevel: (state) => state.controller.currentLevel,
+      elevatorStatus: (state) => state.controller.elevatorStatus,
+    }),
+    ...mapGetters(["includesLevel"]),
   },
   methods: {
     ...mapMutations([
       "addElevatorLevels",
       "changeElevatorStatus",
       "changeElevatorSpeed",
-      "changeDirection",
     ]),
     callUpElevator() {
       if (
         !this.includesLevel(this.floorNumber) &&
-        this.getCurrentElevatorLevel(0) != this.floorNumber &&
-        this.getElevatorStatus(0) === "wait"
+        this.currentLevel != this.floorNumber &&
+        this.elevatorStatus === "wait"
       ) {
         this.addElevatorLevels(this.floorNumber);
         this.changeElevatorStatus("start");
@@ -93,7 +91,7 @@ export default {
   background-color: rgb(44, 63, 44);
 }
 
-.numberFloor {
+.number_floor {
   margin-left: 10px;
 }
 </style>

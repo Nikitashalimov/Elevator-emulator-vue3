@@ -1,32 +1,63 @@
 <template>
   <div class="building">
-    <shaft
-      v-for="(item, index) in elevators"
-      :key="item"
-      :indexShaft="index"
-    ></shaft>
-    <div class="floorColumn">
+    <shaft></shaft>
+    <div class="floor_column">
       <floor v-for="item in allLevel" :key="item" :floorNumber="item"></floor>
     </div>
+  </div>
+  <div class="settings">
+    <input
+      v-model="newAllLevel"
+      class="settings_input"
+      placeholder="Введите количество этажей..."
+      type="number"
+      v-on:keyup.enter="changeLevel(this.newAllLevel)"
+    />
+    <button
+      class="settings_button"
+      type="button"
+      @click="changeLevel(this.newAllLevel)"
+    >
+      ОК
+    </button>
   </div>
 </template>
 
 <script>
 import floor from "@/components/floor.vue";
 import shaft from "@/components/shaft.vue";
-import { mapState } from "vuex";
+import { mapState, mapMutations } from "vuex";
 
 export default {
-  name: "building",
   components: {
     floor,
     shaft,
+  },
+  name: "building",
+  data() {
+    return {
+      newAllLevel: "",
+    };
   },
   computed: {
     ...mapState({
       allLevel: (state) => state.controller.allLevel,
       elevators: (state) => state.controller.elevators,
     }),
+  },
+  methods: {
+    ...mapMutations(["changeAllLevel", "resetCurrentLevel"]),
+    changeLevel(newAllLevel) {
+      if (newAllLevel < 2) {
+        this.resetCurrentLevel();
+        this.changeAllLevel(2);
+        this.newAllLevel = "";
+      } else {
+        this.resetCurrentLevel();
+        this.changeAllLevel(this.newAllLevel);
+        this.newAllLevel = "";
+      }
+    },
   },
 };
 </script>
@@ -46,8 +77,31 @@ export default {
   border-right: 0.5px solid gray;
 }
 
-.floorColumn {
+.floor_column {
   display: flex;
   flex-direction: column-reverse;
+}
+
+.settings {
+  display: flex;
+  width: 250px;
+  height: 25px;
+}
+
+.settings_input {
+  width: 100%;
+  outline: none;
+  border: 1px solid gray;
+  padding-left: 3px;
+}
+
+.settings_input::placeholder {
+  color: blue;
+}
+
+.settings_button {
+  width: 40px;
+  background-color: gray;
+  color: blue;
 }
 </style>
