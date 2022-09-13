@@ -1,5 +1,9 @@
 # Emulator elevator
 
+### Поиграть
+
+https://nikitashalimov.github.io/Elevator-emulator-vue3/
+
 ### Установить
 
 ```sh

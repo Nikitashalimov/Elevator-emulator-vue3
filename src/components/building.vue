@@ -99,6 +99,11 @@ export default {
   color: blue;
 }
 
+.settings_input::-webkit-outer-spin-button,
+.settings_input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+}
+
 .settings_button {
   width: 40px;
   background-color: gray;
